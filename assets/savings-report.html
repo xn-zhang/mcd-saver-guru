@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>麦麦省钱报告</title>
+<style>
+  :root{
+    --mcd-red:#DA291C; --mcd-yellow:#FFC72C; --ink:#1A1A1A;
+    --ink-2:#5A5A5A; --line:#E6E2DC; --bg:#FAF8F5; --card:#FFFFFF;
+    --good:#1F8A4C;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:32px 20px; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  .head{
+    background:linear-gradient(135deg,var(--mcd-red),#B31F14);
+    color:#fff; border-radius:18px; padding:26px 28px; position:relative; overflow:hidden;
+  }
+  .head::after{
+    content:""; position:absolute; right:-30px; top:-30px; width:150px; height:150px;
+    background:var(--mcd-yellow); opacity:.28; border-radius:50%;
+  }
+  .head h1{margin:0 0 6px; font-size:24px; letter-spacing:.5px;}
+  .head p{margin:0; opacity:.92; font-size:14px;}
+  .hero{
+    margin-top:16px; display:flex; gap:14px; flex-wrap:wrap;
+  }
+  .kpi{
+    flex:1 1 150px; background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:16px 18px;
+  }
+  .kpi .lbl{font-size:12px; color:var(--ink-2); letter-spacing:.5px;}
+  .kpi .val{font-size:26px; font-weight:700; margin-top:4px;}
+  .kpi .val.save{color:var(--good);}
+  .sec-title{
+    margin:28px 0 12px; font-size:16px; font-weight:700;
+    display:flex; align-items:center; gap:8px;
+  }
+  .sec-title::before{content:""; width:4px; height:16px; background:var(--mcd-red); border-radius:2px;}
+  table{width:100%; border-collapse:collapse; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  th,td{padding:11px 14px; text-align:left; font-size:14px; border-bottom:1px solid var(--line);}
+  th{background:#F4F1EC; color:var(--ink-2); font-weight:600; font-size:13px;}
+  tr:last-child td{border-bottom:none;}
+  td.num,th.num{text-align:right; font-variant-numeric:tabular-nums;}
+  .rank{font-size:16px;}
+  .badge{
+    display:inline-block; padding:2px 9px; border-radius:20px; font-size:12px; font-weight:600;
+  }
+  .badge.pick{background:var(--mcd-yellow); color:#5A4300;}
+  .badge.alt{background:#EFEBE5; color:var(--ink-2);}
+  .pick-row{background:#FFFBF0;}
+  .saving{color:var(--good); font-weight:700;}
+  .note{
+    background:var(--card); border:1px dashed var(--line); border-radius:12px;
+    padding:14px 18px; font-size:14px; color:var(--ink-2);
+  }
+  .note strong{color:var(--ink);}
+  ul{margin:8px 0 0; padding-left:20px;}
+  li{margin:4px 0; font-size:14px;}
+  .foot{margin-top:26px; text-align:center; font-size:12px; color:var(--ink-2);}
+  @media print{
+    body{background:#fff; padding:0;}
+    .head{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 头部：填充门店 / 渠道 / 日期 -->
+  <div class="head">
+    <h1>🍟 麦麦省钱报告</h1>
+    <p>{{渠道，如：到店自取}} · {{门店名}} ｜ {{生成日期}}</p>
+  </div>
+
+  <!-- KPI：填充核心数字 -->
+  <div class="hero">
+    <div class="kpi"><div class="lbl">原价合计</div><div class="val">¥{{original}}</div></div>
+    <div class="kpi"><div class="lbl">推荐方案实付</div><div class="val">¥{{final}}</div></div>
+    <div class="kpi"><div class="lbl">本次省下</div><div class="val save">¥{{saved}}</div></div>
+    <div class="kpi"><div class="lbl">省率</div><div class="val save">{{rate}}%</div></div>
+  </div>
+
+  <!-- 方案对比表：逐行填充，推荐行加 class="pick-row" -->
+  <div class="sec-title">方案对比</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:56px">排名</th>
+        <th>方案</th>
+        <th class="num">原价</th>
+        <th class="num">实付</th>
+        <th class="num">省额</th>
+        <th class="num">省率</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="pick-row">
+        <td class="rank">🥇</td>
+        <td>{{推荐方案名}} <span class="badge pick">推荐</span></td>
+        <td class="num">¥{{o1}}</td>
+        <td class="num"><b>¥{{f1}}</b></td>
+        <td class="num saving">¥{{s1}}</td>
+        <td class="num">{{r1}}%</td>
+      </tr>
+      <tr>
+        <td class="rank">🥈</td>
+        <td>{{备选方案名}} <span class="badge alt">备选</span></td>
+        <td class="num">¥{{o2}}</td>
+        <td class="num">¥{{f2}}</td>
+        <td class="num saving">¥{{s2}}</td>
+        <td class="num">{{r2}}%</td>
+      </tr>
+      <tr>
+        <td class="rank">🥉</td>
+        <td>{{第三方案名}}</td>
+        <td class="num">¥{{o3}}</td>
+        <td class="num">¥{{f3}}</td>
+        <td class="num saving">¥{{s3}}</td>
+        <td class="num">{{r3}}%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 推荐方案明细 -->
+  <div class="sec-title">推荐方案明细</div>
+  <div class="note">
+    <strong>{{推荐方案名}}</strong><br>
+    商品：{{商品清单，含数量}}<br>
+    优惠：{{券名 / 活动名}} −¥{{优惠额}}<br>
+    <strong>实付 ¥{{实付}}</strong>　省 ¥{{省额}}（{{省率}}%）<br>
+    理由：{{一句话理由，如"用掉 3 天后过期的券，并命中 9.9 早餐活动"}}
+  </div>
+
+  <!-- 顺手赚到 -->
+  <div class="sec-title">顺手赚到</div>
+  <div class="note">
+    <ul>
+      <li>可领券：{{本次可领但未用上的券}}</li>
+      <li>积分：{{本次可获得/消耗的积分，含即将过期提醒}}</li>
+      <li>活动：{{可参加的相关活动及时间}}</li>
+    </ul>
+  </div>
+
+  <div class="foot">价格由麦当劳价格接口实时试算 · 仅供本次下单参考</div>
+</div>
+</body>
+</html>
